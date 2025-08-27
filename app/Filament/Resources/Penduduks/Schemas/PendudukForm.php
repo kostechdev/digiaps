@@ -5,6 +5,8 @@ namespace App\Filament\Resources\Penduduks\Schemas;
 use App\Enums\JenisKelamin;
 use App\Enums\Agama;
 use App\Enums\StatusPerkawinan;
+use App\Models\Rw;
+use App\Models\Rt;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -21,14 +23,8 @@ class PendudukForm
                     ->unique(ignoreRecord: true)
                     ->inputMode('numeric')
                     ->placeholder('Masukkan 16 digit NIK')
-                    ->length(16)
-                    ->numeric()
-                    ->live()
-                    ->afterStateUpdated(function ($state, callable $set) {
-                        if ($state) {
-                            $set('nik', sprintf('%.0f', $state));
-                        }
-                    })
+                    ->maxLength(16)
+                    ->minLength(16)
                     ->rules(['regex:/^[0-9]{16}$/'])
                     ->helperText('NIK harus 16 digit angka'),
                 TextInput::make('nama')
@@ -53,7 +49,13 @@ class PendudukForm
                         'Buddha' => 'Buddha',
                         'Konghucu' => 'Konghucu',
                     ]),
-                TextInput::make('pekerjaan'),
+                Select::make('pekerjaan_id')
+                    ->label('Pekerjaan')
+                    ->relationship('pekerjaan', 'nama')
+                    ->searchable()
+                    ->preload(),
+                TextInput::make('pekerjaan')
+                    ->hidden(),
                 TextInput::make('alamat')
                     ->required(),
                 TextInput::make('no_hp'),
@@ -65,6 +67,25 @@ class PendudukForm
                         'Cerai Hidup' => 'Cerai Hidup',
                         'Cerai Mati' => 'Cerai Mati',
                     ]),
+                Select::make('rw_id')
+                    ->label('RW')
+                    ->options(Rw::all()->pluck('nomor_rw', 'id'))
+                    ->searchable()
+                    ->preload()
+                    ->reactive()
+                    ->afterStateUpdated(fn (callable $set) => $set('rt_id', null)),
+                Select::make('rt_id')
+                    ->label('RT')
+                    ->options(function (callable $get) {
+                        $rwId = $get('rw_id');
+                        if (!$rwId) {
+                            return [];
+                        }
+                        return Rt::where('rw_id', $rwId)->pluck('nomor_rt', 'id');
+                    })
+                    ->searchable()
+                    ->preload()
+                    ->disabled(fn (callable $get) => !$get('rw_id')),
             ]);
     }
 }

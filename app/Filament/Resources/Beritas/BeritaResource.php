@@ -13,12 +13,13 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class BeritaResource extends Resource
 {
     protected static ?string $model = Berita::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedNewspaper;
 
     protected static ?string $recordTitleAttribute = 'berita';
 
@@ -46,5 +47,15 @@ class BeritaResource extends Resource
             'create' => CreateBerita::route('/create'),
             'edit' => EditBerita::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->with('author');
+    }
+
+    public static function canCreate(): bool
+    {
+        return true;
     }
 }

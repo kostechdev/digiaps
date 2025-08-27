@@ -16,4 +16,11 @@ class ListBeritas extends ListRecords
             CreateAction::make(),
         ];
     }
+
+    protected function getEmptyStateActions(): array
+    {
+        return [
+            CreateAction::make(),
+        ];
+    }
 }

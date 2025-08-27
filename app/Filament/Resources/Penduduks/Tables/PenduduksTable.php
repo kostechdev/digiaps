@@ -5,6 +5,8 @@ namespace App\Filament\Resources\Penduduks\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\CreateAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Actions\DeleteAction;
@@ -20,24 +22,39 @@ class PenduduksTable
                     ->formatStateUsing(fn ($state) => sprintf('%.0f', $state))
                     ->copyable(),
                 TextColumn::make('nama')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('tempat_lahir')
                     ->searchable(),
                 TextColumn::make('tanggal_lahir')
                     ->date()
                     ->sortable(),
-                TextColumn::make('jenis_kelamin')
-                    ->searchable(),
-                TextColumn::make('agama')
-                    ->searchable(),
-                TextColumn::make('pekerjaan')
-                    ->searchable(),
                 TextColumn::make('alamat')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('rt.nomor_rt')
+                    ->label('RT')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('rw.nomor_rw')
+                    ->label('RW')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('jenis_kelamin')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('agama')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('pekerjaan')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('no_hp')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('status_perkawinan')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -50,11 +67,15 @@ class PenduduksTable
             ->filters([
                 //
             ])
-            ->recordActions([
+            ->emptyStateActions([
+                CreateAction::make(),
+            ])
+            ->actions([
+                ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
             ])
-            ->toolbarActions([
+            ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

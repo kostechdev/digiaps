@@ -13,12 +13,15 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class PendudukResource extends Resource
 {
     protected static ?string $model = Penduduk::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Data Master';
 
     protected static ?string $recordTitleAttribute = 'penduduk';
 
@@ -46,5 +49,10 @@ class PendudukResource extends Resource
             'create' => CreatePenduduk::route('/create'),
             'edit' => EditPenduduk::route('/{record}/edit'),
         ];
+    }
+
+    public static function canCreate(): bool
+    {
+        return true;
     }
 }
