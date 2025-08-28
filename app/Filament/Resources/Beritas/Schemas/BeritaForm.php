@@ -37,9 +37,30 @@ class BeritaForm
                     ->image()
                     ->directory('berita-images')
                     ->required()
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->saveUploadedFileUsing(function ($file, $record) {
+                        return \App\Services\DualStorageUploadService::store($file, 'berita-images');
+                    })
+                    ->deleteUploadedFileUsing(function ($file) {
+                        \App\Services\DualStorageUploadService::delete($file);
+                    }),
                 RichEditor::make('konten')
                     ->required()
+                    ->toolbarButtons([
+                        'bold',
+                        'italic',
+                        'underline',
+                        'strike',
+                        'bulletList',
+                        'orderedList',
+                        'blockquote',
+                        'h2',
+                        'h3',
+                        'link',
+                        'redo',
+                        'undo'
+                        
+                    ])
                     ->columnSpanFull(),
                 Hidden::make('penulis')
                     ->default(fn () => auth()->id()),

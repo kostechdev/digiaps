@@ -23,7 +23,13 @@ class GaleriForm
                     FileUpload::make('path')
                         ->image()
                         ->directory('galeri-images')
-                        ->required(),
+                        ->required()
+                        ->saveUploadedFileUsing(function ($file, $record) {
+                            return \App\Services\DualStorageUploadService::store($file, 'galeri-images');
+                        })
+                        ->deleteUploadedFileUsing(function ($file) {
+                            \App\Services\DualStorageUploadService::delete($file);
+                        }),
                 ])
                 ->orderable('position')
                 ->minItems(0)
